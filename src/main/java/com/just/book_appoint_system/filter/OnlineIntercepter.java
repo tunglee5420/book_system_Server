@@ -2,6 +2,7 @@ package com.just.book_appoint_system.filter;
 
 import com.alibaba.fastjson.JSON;
 
+import com.just.book_appoint_system.util.DataThreadLocal;
 import com.just.book_appoint_system.util.JsonData;
 import com.just.book_appoint_system.util.JwtUtil;
 import com.just.book_appoint_system.util.RedisUtils;
@@ -12,11 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.util.Map;
 
 @Component
 public class OnlineIntercepter implements HandlerInterceptor {
@@ -37,21 +36,23 @@ public class OnlineIntercepter implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token= request.getHeader("token");
-//        System.out.println(token);
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
         if(token==null||token.equals("")){
-            System.out.println("=====================================================================");
+
             printJson(response,-1,"token 为空，请登陆！");
             return false;
         }
-        String worknum= (String) JwtUtil.checkJWT(token).get("worknum");
-        logger.debug("工号："+worknum);
+
+
         if(JwtUtil.checkJWT(token)!=null){
-            if(redisUtils.get("login:"+worknum)!=null){
-               Map map= (Map)redisUtils.get("login:"+worknum);
-               if(map.get("token").equals(token)){
+            String sid= (String) JwtUtil.checkJWT(token).get("sid");
+            if(redisUtils.get("login:"+sid)!=null){
+               String token1= (String)redisUtils.get("login:"+sid);
+               if(token1.equals(token)){
+                   //将用户信息存入UserThreadLocal
+                   DataThreadLocal.set(sid);
                    return true;
                }
                printJson(response,-1,"第三方登陆,token失效");
@@ -89,7 +90,9 @@ public class OnlineIntercepter implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
+        //将DataThreadLocal中的信息清除
+        System.out.println("=====================完成============================");
+        DataThreadLocal.set(null);
     }
 
     static void printJson(HttpServletResponse response, int code, String message) {
@@ -110,5 +113,6 @@ public class OnlineIntercepter implements HandlerInterceptor {
             e.printStackTrace();
         }
     }
+
 
 }

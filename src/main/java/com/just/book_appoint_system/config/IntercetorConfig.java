@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class IntercetorConfig implements WebMvcConfigurer {
 
     @Autowired
-    OnlineIntercepter onlineIntercepter;
+    private OnlineIntercepter onlineIntercepter;
 
 
 

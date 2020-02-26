@@ -15,7 +15,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     public static final String SUBJECT="book";
-    public static final long Ex_Time=60*1000*60*24;//过期时间，毫秒
+    public static final long Ex_Time=60*1000*60*24*2;//过期时间，毫秒
     public static final String APPSECRET="JUST@13999";//密钥
 
     /**

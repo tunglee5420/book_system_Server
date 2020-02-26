@@ -1,5 +1,7 @@
 package com.just.book_appoint_system.util;
 
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 
 /**
@@ -7,6 +9,7 @@ import java.io.Serializable;
  *
  * <p> 创建时间：May 14, 2018 7:58:06 PM </p>
  */
+@Component
 public class JsonData implements Serializable {
 
 	/**
@@ -14,7 +17,7 @@ public class JsonData implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Integer code; // 状态码 0 表示成功，1表示处理中，-1表示失败
+	private Integer code; // 状态码 0 表示成功，1表示处理中，500表示失败,
 	private Object data; // 数据
 	private String msg;// 描述
 
@@ -36,6 +39,12 @@ public class JsonData implements Serializable {
 	public static JsonData buildSuccess(Object data) {
 		return new JsonData(0, data, null);
 	}
+
+	// 异常
+	public static JsonData buildException(int code, String  msg) {
+		return new JsonData(code, null, msg);
+	}
+
 
 	// 失败，传入描述信息
 	public static JsonData buildError(String msg) {

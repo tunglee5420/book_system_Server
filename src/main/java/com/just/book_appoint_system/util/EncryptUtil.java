@@ -49,6 +49,7 @@ public class EncryptUtil {
      * @return
      */
     private String messageDigest(String res,String algorithm){
+
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
             byte[] resBytes = charset==null?res.getBytes():res.getBytes(charset);
@@ -159,6 +160,9 @@ public class EncryptUtil {
      * @return
      */
     public String MD5(String res) {
+        if(res==null){
+            return null;
+        }
         return messageDigest(res, MD5);
     }
 
